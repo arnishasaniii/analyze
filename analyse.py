@@ -46,6 +46,39 @@ st.caption(
 )
 
 # ----------------------------------------------------------------------
+# PASSWORD PROTECTION — simple shared-password gate for an internal tool.
+# Set APP_PASSWORD in .streamlit/secrets.toml (local) or Streamlit Cloud
+# secrets (deployed). Nothing below this runs until the password matches.
+# ----------------------------------------------------------------------
+def check_password():
+    try:
+        configured_password = st.secrets.get("APP_PASSWORD", None)
+    except Exception:
+        configured_password = None
+
+    if configured_password is None:
+        return True  # no password configured — app stays open
+
+    def password_entered():
+        if st.session_state.get("password") == configured_password:
+            st.session_state["password_correct"] = True
+            del st.session_state["password"]
+        else:
+            st.session_state["password_correct"] = False
+
+    if st.session_state.get("password_correct", False):
+        return True
+
+    st.text_input("🔒 Password", type="password", on_change=password_entered, key="password")
+    if "password_correct" in st.session_state and not st.session_state["password_correct"]:
+        st.error("Incorrect password.")
+    return False
+
+
+if not check_password():
+    st.stop()
+
+# ----------------------------------------------------------------------
 # COLUMN ALIASES — used in FMCG mode to recognize commercial columns
 # ----------------------------------------------------------------------
 COLUMN_ALIASES = {
