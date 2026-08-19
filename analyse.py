@@ -371,8 +371,8 @@ groq_api_key = st.sidebar.text_input(
     ),
 )
 groq_model = st.sidebar.selectbox(
-    "Model", ["llama-3.1-8b-instant", "llama-3.3-70b-versatile"], index=0,
-    help="8B is faster with the most generous free daily limit. 70B is smarter for tricky questions.",
+    "Model", ["openai/gpt-oss-20b", "openai/gpt-oss-120b"], index=0,
+    help="20B is faster with the most generous free daily limit. 120B is smarter for tricky questions.",
 )
 
 # ----------------------------------------------------------------------
